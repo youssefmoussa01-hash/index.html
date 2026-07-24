@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+\<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -47,13 +47,13 @@
   }
   nav a{
     margin-left: 28px; text-decoration:none; color:var(--ink);
-    font-weight:700; font-size:0.95rem; position:relative;
+    font-weight:700; font-size:0.95rem; position:relative; cursor:pointer;
   }
   nav a::after{
     content:""; position:absolute; left:0; bottom:-4px; height:4px; width:0%;
     background:var(--pink); border-radius:4px; transition:width .25s ease;
   }
-  nav a:hover::after{ width:100%; }
+  nav a:hover::after, nav a.active::after{ width:100%; }
   .cart-btn{
     background:var(--purple); color:white; border:none; padding:10px 20px;
     border-radius:999px; font-weight:800; cursor:pointer; font-size:0.9rem;
@@ -88,12 +88,6 @@
   }
   .btn-primary:hover{ transform: translateY(-3px); }
   .btn-primary:active{ transform: translateY(2px); box-shadow: 0 3px 0 #c94875; }
-  .btn-secondary{
-    background:white; color:var(--ink); border:3px solid var(--ink); padding:14px 30px;
-    border-radius:999px; font-weight:800; font-size:1.05rem; cursor:pointer;
-    transition: transform .15s ease;
-  }
-  .btn-secondary:hover{ transform: translateY(-3px); }
   .hero-art{
     flex:1; min-width:320px; position:relative; height:420px; z-index:1;
   }
@@ -180,28 +174,9 @@
   .section-head h2{ font-size:2.4rem; }
   .section-head p{ opacity:0.7; margin-top:8px; }
 
-  .cat-grid{
-    display:grid; grid-template-columns: repeat(auto-fit, minmax(210px,1fr));
-    gap:28px;
-  }
-  .cat-card{
-    border-radius: 28px; padding: 32px 24px; text-align:center;
-    position:relative; overflow:hidden; cursor:pointer;
-    transition: transform .2s ease;
-    border: none;
-    font-family: inherit;
-  }
-  .cat-card:hover{ transform: translateY(-8px) rotate(-1deg); }
-  .cat-card .icon{ font-size:3.2rem; margin-bottom:14px; display:block; }
-  .cat-card h3{ font-size:1.3rem; }
-  .cat-card.c1{ background: #FFE1EC; }
-  .cat-card.c2{ background: #FFF3C4; }
-  .cat-card.c3{ background: #D6F5F0; }
-  .cat-card.c4{ background: #E7DEFF; }
-
   .products{
     display:grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr));
-    gap: 30px; margin-top: 60px;
+    gap: 30px; margin-top: 40px;
   }
   .product{
     background:white; border-radius:24px; padding:20px;
@@ -325,10 +300,6 @@
   .radio-label { display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.95rem; cursor: pointer; }
   .radio-label input { width: 18px; height: 18px; accent-color: var(--purple); cursor: pointer; }
 
-  .back-link{
-    background:none; border:none; color:var(--purple); font-weight:700; cursor:pointer;
-    margin-bottom:18px; font-size:0.9rem; text-align:left;
-  }
   .order-summary{
     background:white; border-radius:16px; padding:16px; margin-bottom:20px; font-size:0.9rem;
   }
@@ -399,12 +370,9 @@
 
 <header>
   <div class="logo"><span class="dot"></span> &nbsp;&nbsp;&nbsp;&nbsp;Mounne Bazar</div>
-  <nav>
-    <a href="#">New</a>
-    <a href="#">Ages 0-2</a>
-    <a href="#">Ages 3-6</a>
-    <a href="#">Ages 7+</a>
-    <a href="#">Sale</a>
+  <nav id="mainNav">
+    <a data-filter="all" class="active">Shop All</a>
+    <a data-filter="sale">Sale</a>
   </nav>
   <button class="cart-btn" id="openCartBtn">🛒 Cart (<span class="cart-count-badge" id="cartCount">0</span>)</button>
 </header>
@@ -415,7 +383,6 @@
     <h1>Playtime just got a <span class="swirl">little wilder.</span></h1>
     <div class="cta-row">
       <button class="btn-primary" onclick="document.querySelector('.shop').scrollIntoView({behavior:'smooth'})">Shop the shop →</button>
-      <button class="btn-secondary" onclick="document.querySelector('.shop').scrollIntoView({behavior:'smooth'})">Gift finder</button>
     </div>
   </div>
   <div class="hero-art">
@@ -458,19 +425,8 @@
 
 <section class="shop">
   <div class="section-head">
-    <h2>Shop by kind of chaos</h2>
-    <p>Pick your child's current obsession.</p>
-  </div>
-  <div class="cat-grid">
-    <button class="cat-card c1"><span class="icon">🧩</span><h3>Puzzles & Brain Games</h3></button>
-    <button class="cat-card c2"><span class="icon">🚂</span><h3>Cars, Trains & Blocks</h3></button>
-    <button class="cat-card c3"><span class="icon">🧸</span><h3>Plush & Cuddly</h3></button>
-    <button class="cat-card c4"><span class="icon">🎨</span><h3>Arts & Crafts</h3></button>
-  </div>
-
-  <div class="section-head" style="margin-top:80px;">
-    <h2>Fresh off the shelf</h2>
-    <p>The toys everyone's fighting over right now.</p>
+    <h2 id="shopTitle">Fresh off the shelf</h2>
+    <p id="shopSubtitle">The toys everyone's fighting over right now.</p>
   </div>
   <div class="products" id="productGrid">
     <div style="grid-column: 1/-1; text-align: center; padding: 40px; opacity: 0.6;">Loading live products...</div>
@@ -481,9 +437,9 @@
   <h3>Mounne Bazar</h3>
   <p style="opacity:0.85; max-width:420px;">Toys tested by actual toddlers. Every purchase plants a tree, because playgrounds need shade too.</p>
   <div class="foot-cols" style="margin-top:40px;">
-    <div><a href="#">Shop All</a><a href="#">Gift Cards</a><a href="#">Sale</a></div>
-    <div><a href="#">About Us</a><a href="#">Safety Info</a><a href="#">Contact</a></div>
-    <div><a href="#">Instagram</a><a href="#">TikTok</a><a href="#">Pinterest</a></div>
+    <div></div>
+    <div></div>
+    <div></div>
   </div>
   <div class="foot-bottom">© 2026 Mounne Bazar Toy Co. Made with too much glitter.</div>
 </footer>
@@ -521,7 +477,7 @@
 <!-- FIREBASE SDK -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  import { getFirestore, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyDh0vhJsESUcipVsEsZhIvjVvz04isujz8",
@@ -545,6 +501,7 @@
 <script>
   let PRODUCTS = [];
   let cart = {};
+  let currentFilter = 'all';
 
   function fmt(n){
     return n.toLocaleString('en-US') + ' EGP';
@@ -574,17 +531,30 @@
     }
   }
 
-  // Delay to ensure Firebase is attached to window first
   setTimeout(loadLiveProducts, 500);
 
   function renderProducts(){
     const grid = document.getElementById('productGrid');
-    if (PRODUCTS.length === 0) {
-      grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; opacity: 0.6;">No products available right now!</div>';
+    const titleEl = document.getElementById('shopTitle');
+    const subtitleEl = document.getElementById('shopSubtitle');
+
+    let filtered = PRODUCTS;
+    if(currentFilter === 'sale'){
+      titleEl.textContent = 'Sale Items';
+      subtitleEl.textContent = 'Grab them before they are gone!';
+      filtered = PRODUCTS.filter(p => p.salePrice && p.salePrice < p.price);
+    } else {
+      titleEl.textContent = 'Fresh off the shelf';
+      subtitleEl.textContent = "The toys everyone's fighting over right now.";
+      filtered = PRODUCTS;
+    }
+
+    if (filtered.length === 0) {
+      grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; opacity: 0.6;">No products found for this category!</div>';
       return;
     }
 
-    grid.innerHTML = PRODUCTS.map(p => {
+    grid.innerHTML = filtered.map(p => {
       const priceDisplay = p.salePrice ? `<del style="font-size:0.85rem; opacity:0.6; color:#1E1E2D;">${fmt(p.price)}</del> <span>${fmt(p.salePrice)}</span>` : `<span>${fmt(p.price)}</span>`;
       return `
         <div class="product product-card-clickable" data-id="${p.id}">
@@ -619,6 +589,18 @@
       });
     });
   }
+
+  // Setup Nav Filter Click Listeners
+  document.querySelectorAll('#mainNav a').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      document.querySelectorAll('#mainNav a').forEach(l => l.classList.remove('active'));
+      link.classList.add('active');
+      currentFilter = link.getAttribute('data-filter');
+      renderProducts();
+      document.querySelector('.shop').scrollIntoView({behavior: 'smooth'});
+    });
+  });
 
   function addToCart(id){
     cart[id] = (cart[id] || 0) + 1;
@@ -829,7 +811,6 @@
     const phone = document.getElementById('in-phone').value.trim();
     const address = document.getElementById('in-address').value.trim();
     const city = document.getElementById('in-city').value.trim();
-    
     const payment = document.querySelector('input[name="paymentMethod"]:checked').value;
 
     let valid = true;
@@ -855,7 +836,6 @@
     statusEl.className = 'status-msg show sending';
 
     try {
-      // Send Order to Firebase
       await window.addDoc(window.collection(window.db, "orders"), {
         orderId: orderId,
         name: name, 
@@ -892,7 +872,6 @@
       checkoutOverlay.classList.remove('open');
     });
   }
-
 </script>
 </body>
 </html>
