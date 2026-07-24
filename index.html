@@ -210,7 +210,6 @@
   }
   .product:hover{ transform: translateY(-6px); }
 
-  /* UPDATED IMAGE STYLING */
   .product-img {
     height: 200px;
     border-radius: 14px;
@@ -474,7 +473,7 @@
     <p>The toys everyone's fighting over right now.</p>
   </div>
   <div class="products" id="productGrid">
-    <!-- product cards rendered by JS -->
+    <div style="grid-column: 1/-1; text-align: center; padding: 40px; opacity: 0.6;">Loading live products...</div>
   </div>
 </section>
 
@@ -519,14 +518,32 @@
   </div>
 </div>
 
+<!-- FIREBASE SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDh0vhJsESUcipVsEsZhIvjVvz04isujz8",
+    authDomain: "mounne-bazar.firebaseapp.com",
+    projectId: "mounne-bazar",
+    storageBucket: "mounne-bazar.firebasestorage.app",
+    messagingSenderId: "64959130604",
+    appId: "1:64959130604:web:4720cf21808e86147b6ec9",
+    measurementId: "G-20G3B800GK"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  window.db = db;
+  window.collection = collection;
+  window.getDocs = getDocs;
+  window.addDoc = addDoc;
+</script>
+
 <script>
-  const GOOGLE_SHEET_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyrP0hZE2na0odKLnXXk0yfhnKT-f1aCn5EOyqrP354apYXVAJ89qxjK1aEXqxs1fQR/exec";
-
-  let PRODUCTS = JSON.parse(localStorage.getItem('products')) || [
-    { id:'p1', name:'Dizzy Dragon Plush', age:'Ages 1+', price:1899, emoji:'🐉', desc:'A soft and cuddly plush toy perfect for little ones.' },
-    { id:'p2', name:'Chugga Wooden Train Set', age:'Ages 2+', price:3450, salePrice:2900, emoji:'🚂', desc:'Classic wooden train set with magnetic connections.' },
-  ];
-
+  let PRODUCTS = [];
   let cart = {};
 
   function fmt(n){
@@ -541,8 +558,32 @@
     return possibleLink || '🎁';
   }
 
+  // Fetch Live Products from Firebase
+  async function loadLiveProducts() {
+    try {
+      const querySnapshot = await window.getDocs(window.collection(window.db, "products"));
+      PRODUCTS = [];
+      querySnapshot.forEach((doc) => {
+        let productData = doc.data();
+        productData.id = doc.id;
+        PRODUCTS.push(productData);
+      });
+      renderProducts();
+    } catch(err) {
+      document.getElementById('productGrid').innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: red;">Error loading products.</div>';
+    }
+  }
+
+  // Delay to ensure Firebase is attached to window first
+  setTimeout(loadLiveProducts, 500);
+
   function renderProducts(){
     const grid = document.getElementById('productGrid');
+    if (PRODUCTS.length === 0) {
+      grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; opacity: 0.6;">No products available right now!</div>';
+      return;
+    }
+
     grid.innerHTML = PRODUCTS.map(p => {
       const priceDisplay = p.salePrice ? `<del style="font-size:0.85rem; opacity:0.6; color:#1E1E2D;">${fmt(p.price)}</del> <span>${fmt(p.salePrice)}</span>` : `<span>${fmt(p.price)}</span>`;
       return `
@@ -814,31 +855,17 @@
     statusEl.className = 'status-msg show sending';
 
     try {
-      await fetch(GOOGLE_SHEET_WEB_APP_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify({ 
-          type: 'order',
-          orderId: orderId,
-          name, 
-          phone, 
-          address, 
-          city, 
-          items: itemsSummary, 
-          total 
-        })
-      });
-      
-      const existingOrders = JSON.parse(localStorage.getItem('shopOrders')) || [];
-      existingOrders.push({
-        orderId,
-        name, phone, address, city,
-        items: itemsSummary,
+      // Send Order to Firebase
+      await window.addDoc(window.collection(window.db, "orders"), {
+        orderId: orderId,
+        name: name, 
+        phone: phone, 
+        address: address, 
+        city: city, 
+        items: itemsSummary, 
         total: fmt(total),
         timestamp: new Date().toLocaleString()
       });
-      localStorage.setItem('shopOrders', JSON.stringify(existingOrders));
       
       showOrderSuccess(name, orderId);
     } catch(err){
@@ -866,8 +893,6 @@
     });
   }
 
-  renderProducts();
-  updateCartCount();
 </script>
 </body>
 </html>
