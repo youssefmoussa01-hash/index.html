@@ -143,7 +143,6 @@
   .marquee-track{ display:inline-block; animation: scroll 18s linear infinite; }
   @keyframes scroll{ from{transform:translateX(0);} to{transform:translateX(-50%);} }
 
-  /* ---------- Why Choose Us Section ---------- */
   .why-choose-us {
     padding: 40px 4%;
     background: #FAFAFC;
@@ -211,10 +210,9 @@
   @media(min-width: 768px){ .section-head h2{ font-size:2.4rem; } }
   .section-head p{ opacity:0.7; margin-top:6px; font-size: 0.9rem; }
 
-  /* ---------- 2 Products Side-by-Side Grid Configuration ---------- */
   .products{
     display: grid;
-    grid-template-columns: repeat(2, 1fr); /* Forces 2 products side by side on mobile and up */
+    grid-template-columns: repeat(2, 1fr);
     gap: 10px; 
     margin-top: 20px;
   }
@@ -237,7 +235,7 @@
   .product:hover{ transform: translateY(-3px); }
 
   .product-img {
-    height: 115px; /* Compact height optimized for 2-column mobile screens */
+    height: 115px;
     border-radius: 10px;
     display: flex;
     align-items: center;
@@ -277,7 +275,7 @@
 
   .price-row{ 
     display: flex; 
-    flex-direction: column; /* Stack price and button vertically on narrow screens to prevent text crowding */
+    flex-direction: column;
     align-items: flex-start; 
     gap: 6px; 
     margin-top: 6px; 
@@ -299,6 +297,12 @@
   .add-btn:hover{ background: var(--purple); }
   .add-btn.added{ background: var(--teal); }
 
+  /* Order tracking section styles */
+  .card {
+    background: #fff;
+    border-radius: 12px;
+  }
+
   footer{
     background: var(--purple); color:white; padding:40px 5% 25px; margin-top:40px;
     border-radius: 30px 30px 0 0;
@@ -309,7 +313,6 @@
   .foot-cols a{ display:block; color:#e6e0ff; text-decoration:none; margin-bottom:6px; font-size:0.9rem;}
   .foot-bottom{ text-align:center; opacity:0.7; font-size:0.75rem; border-top:1px solid rgba(255,255,255,0.2); padding-top:16px;}
 
-  /* ---------- cart / checkout overlay ---------- */
   .overlay-bg{
     position:fixed; inset:0; background:rgba(43,33,64,0.45);
     display:none; align-items:flex-start; justify-content:flex-end;
@@ -405,7 +408,6 @@
   .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
   .cart-count-badge{ display:inline-block; }
 
-  /* ---------- product detail modal ---------- */
   .product-detail-overlay{
     position:fixed; inset:0; background:rgba(43,33,64,0.45);
     display:none; align-items:center; justify-content:center;
@@ -446,9 +448,7 @@
   }
   .detail-add-btn:hover{ transform: translateY(-3px); }
   .detail-add-btn:active{ transform: translateY(2px); box-shadow: 0 2px 0 #c94875; }
-  .product-card-clickable{
-    cursor:pointer;
-  }
+  .product-card-clickable{ cursor:pointer; }
 </style>
 </head>
 <body>
@@ -468,7 +468,7 @@
     <span class="eyebrow">✨ New arrivals every Friday</span>
     <h1>Playtime just got a <span class="swirl">little wilder.</span></h1>
     <div class="cta-row">
-      <button class="btn-primary" onclick="document.querySelector('.shop').scrollIntoView({behavior:'smooth'})">Shop the shop →</button>
+      <button class="btn-primary" onclick="document.querySelector('.shop').scrollIntoView({behavior:'smooth'})">Shop the products →</button>
     </div>
   </div>
   <div class="hero-art">
@@ -522,6 +522,18 @@
 <footer>
   <h3>Mounne Bazar</h3>
   <p style="opacity:0.85; max-width:420px; font-size: 0.85rem;">Toys tested by actual toddlers. Every purchase plants a tree, because playgrounds need shade too.</p>
+  
+  <!-- Customer Tracking Section added to Footer -->
+  <div class="card" style="margin-top: 30px; padding: 20px; background: rgba(255, 255, 255, 0.1); border-radius: 12px; max-width: 500px;">
+    <h3 style="font-size: 1.15rem; margin-bottom: 6px;">Track Your Order</h3>
+    <p style="font-size: 0.85rem; color: #e6e0ff; margin-bottom: 10px;">Enter your Order ID (e.g., #MB-1234) to see live delivery updates.</p>
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+      <input type="text" id="trackInput" placeholder="Enter Order ID..." style="flex:1; padding: 9px 10px; border: 2px solid rgba(255,255,255,0.2); border-radius: 10px; font-size: 0.85rem; background: rgba(255,255,255,0.9); color: var(--ink);">
+      <button onclick="trackUserOrder()" class="btn-primary" style="width: auto; padding: 9px 18px; font-size: 0.85rem;">Track</button>
+    </div>
+    <div id="trackResult" style="margin-top: 12px; font-size: 0.9rem;"></div>
+  </div>
+
   <div class="foot-cols" style="margin-top:20px;">
     <div></div>
     <div></div>
@@ -537,6 +549,18 @@
       <button class="close-x" id="closeCartBtn">✕</button>
     </div>
     <div id="cartItemsWrap"></div>
+    
+    <!-- Customer Tracking Section added at the bottom of the Cart Panel -->
+    <div class="card" style="margin-top: 20px; padding: 15px; background: #f8f9fc; border-radius: 12px; border: 1px solid #e5ddf5;">
+      <h3 style="font-size: 1rem; margin-bottom: 4px; color: var(--ink);">Track Your Order</h3>
+      <p style="font-size: 0.75rem; color: #666; margin-bottom: 8px;">Enter your Order ID (e.g., #MB-1234) for live status.</p>
+      <div style="display: flex; gap: 8px;">
+        <input type="text" id="cartTrackInput" placeholder="Enter Order ID..." style="flex:1; padding: 8px; border: 1px solid #ddd; border-radius: 8px; font-size: 0.8rem;">
+        <button onclick="trackCartOrder()" class="btn-primary" style="width: auto; padding: 8px 14px; font-size: 0.8rem;">Track</button>
+      </div>
+      <div id="cartTrackResult" style="margin-top: 10px; font-size: 0.85rem;"></div>
+    </div>
+
     <div class="cart-footer" id="cartFooter"></div>
   </div>
 </div>
@@ -586,6 +610,7 @@
 
 <script>
   let PRODUCTS = [];
+  let BUNDLES = [];
   let cart = {};
   let currentFilter = 'all';
 
@@ -601,7 +626,7 @@
     return possibleLink || '🎁';
   }
 
-  // Fetch Live Products from Firebase
+  // Fetch Live Products and Bundles from Firebase
   async function loadLiveProducts() {
     try {
       const querySnapshot = await window.getDocs(window.collection(window.db, "products"));
@@ -611,6 +636,22 @@
         productData.id = doc.id;
         PRODUCTS.push(productData);
       });
+
+      const bundleSnapshot = await window.getDocs(window.collection(window.db, "bundles"));
+      BUNDLES = [];
+      bundleSnapshot.forEach((doc) => {
+        let bundleData = doc.data();
+        bundleData.id = doc.id;
+        BUNDLES.push({
+          id: bundleData.id,
+          name: bundleData.name,
+          price: bundleData.price,
+          age: "Bundle (" + bundleData.items + ")",
+          emoji: "🎁",
+          isBundle: true
+        });
+      });
+
       renderProducts();
     } catch(err) {
       document.getElementById('productGrid').innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: red;">Error loading products.</div>';
@@ -624,7 +665,9 @@
     const titleEl = document.getElementById('shopTitle');
     const subtitleEl = document.getElementById('shopSubtitle');
 
-    let filtered = PRODUCTS;
+    let allItems = [...PRODUCTS, ...BUNDLES];
+    let filtered = allItems;
+
     if(currentFilter === 'sale'){
       titleEl.textContent = 'Sale Items';
       subtitleEl.textContent = 'Grab them before they are gone!';
@@ -632,7 +675,7 @@
     } else {
       titleEl.textContent = 'Fresh off the shelf';
       subtitleEl.textContent = "The toys everyone's fighting over right now.";
-      filtered = PRODUCTS;
+      filtered = allItems;
     }
 
     if (filtered.length === 0) {
@@ -678,7 +721,6 @@
     });
   }
 
-  // Setup Nav Filter Click Listeners
   document.querySelectorAll('#mainNav a').forEach(link => {
     link.addEventListener('click', (e) => {
       e.preventDefault();
@@ -713,7 +755,8 @@
 
   function cartTotal(){
     return Object.entries(cart).reduce((sum, [id, qty]) => {
-      const p = PRODUCTS.find(p => p.id === id);
+      const allItems = [...PRODUCTS, ...BUNDLES];
+      const p = allItems.find(p => p.id === id);
       return sum + (p ? (p.salePrice ? p.salePrice : p.price) * qty : 0);
     }, 0);
   }
@@ -737,8 +780,10 @@
       return;
     }
 
+    const allItems = [...PRODUCTS, ...BUNDLES];
     wrap.innerHTML = ids.map(id => {
-      const p = PRODUCTS.find(p => p.id === id);
+      const p = allItems.find(p => p.id === id);
+      if(!p) return '';
       const qty = cart[id];
       const activePrice = p.salePrice ? p.salePrice : p.price;
       return `
@@ -779,7 +824,8 @@
   }
 
   function openProductDetail(productId){
-    const product = PRODUCTS.find(p => p.id === productId);
+    const allItems = [...PRODUCTS, ...BUNDLES];
+    const product = allItems.find(p => p.id === productId);
     if(!product) return;
 
     const content = document.getElementById('detailContent');
@@ -837,8 +883,9 @@
 
   function renderCheckoutForm(){
     const body = document.getElementById('checkoutBody');
+    const allItems = [...PRODUCTS, ...BUNDLES];
     const items = Object.entries(cart).map(([id, qty]) => {
-      const p = PRODUCTS.find(p => p.id === id);
+      const p = allItems.find(p => p.id === id);
       const activePrice = p.salePrice ? p.salePrice : p.price;
       return { name: p.name, qty, subtotal: activePrice * qty };
     });
@@ -908,13 +955,14 @@
     setFieldError('f-city', !city); if(!city) valid = false;
     if(!valid) return;
 
+    const allItems = [...PRODUCTS, ...BUNDLES];
     const itemsSummary = Object.entries(cart).map(([id, qty]) => {
-      const p = PRODUCTS.find(p => p.id === id);
+      const p = allItems.find(p => p.id === id);
       return `${p.name} x${qty}`;
     }).join(', ') + `  |  Payment: ${payment}`;
     
     const total = cartTotal();
-    const orderId = 'ORD-' + Math.floor(100000 + Math.random() * 900000);
+    const orderId = 'MB-' + Math.floor(1000 + Math.random() * 9000);
 
     const statusEl = document.getElementById('statusMsg');
     const btn = document.getElementById('placeOrderBtn');
@@ -932,6 +980,7 @@
         city: city, 
         items: itemsSummary, 
         total: fmt(total),
+        status: 'Awaiting Shipment',
         timestamp: new Date().toLocaleString()
       });
       
@@ -950,7 +999,7 @@
         <div class="sc-icon">🎉</div>
         <h3>Thanks, ${name.split(' ')[0]}!</h3>
         <p>Your order has been placed. We'll reach out to confirm delivery.</p>
-        <p style="margin-top: 10px; font-weight: bold; background: #f4f4f6; padding: 10px; border-radius: 8px;">Order ID: ${orderId}</p>
+        <p style="margin-top: 10px; font-weight: bold; background: #f4f4f6; padding: 10px; border-radius: 8px;">Order ID: #${orderId}</p>
         <button class="checkout-btn" id="doneBtn" style="margin-top: 16px;">Back to shopping</button>
       </div>
     `;
@@ -959,6 +1008,99 @@
       updateCartCount();
       checkoutOverlay.classList.remove('open');
     });
+  }
+
+  // Customer Order Tracking Functions for Footer and Cart
+  async function trackUserOrder() {
+    const queryId = document.getElementById('trackInput').value.trim().toUpperCase();
+    const resultBox = document.getElementById('trackResult');
+    
+    if(!queryId) {
+      resultBox.innerHTML = `<span style="color:#ffccd5;">Please enter a valid Order ID.</span>`;
+      return;
+    }
+
+    resultBox.innerHTML = "Searching...";
+
+    try {
+      const querySnapshot = await window.getDocs(window.collection(window.db, "orders"));
+      let foundOrder = null;
+      
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        if(data.orderId && data.orderId.toUpperCase() === queryId.replace('#', '')) {
+          foundOrder = data;
+        }
+      });
+
+      if(foundOrder) {
+        const status = foundOrder.status || 'Awaiting Shipment';
+        let statusColor = '#ffd166';
+        if(status === 'Shipped') statusColor = '#4cc9f0';
+        if(status === 'Delivered') statusColor = '#06d6a0';
+
+        resultBox.innerHTML = `
+          <div style="background: rgba(255,255,255,0.1); padding: 12px; border-radius: 8px; border-left: 4px solid ${statusColor}; text-align: left; margin-top: 8px;">
+            <p><strong>Order ID:</strong> #${foundOrder.orderId}</p>
+            <p><strong>Customer:</strong> ${foundOrder.name}</p>
+            <p><strong>Items:</strong> ${foundOrder.items}</p>
+            <p><strong>Total:</strong> ${foundOrder.total}</p>
+            <p style="margin-top: 6px;"><strong>Status:</strong> <span style="color: ${statusColor}; font-weight: bold;">${status}</span></p>
+          </div>
+        `;
+      } else {
+        resultBox.innerHTML = `<span style="color:#ffccd5;">Order not found. Please double-check your Order ID.</span>`;
+      }
+    } catch(err) {
+      console.error(err);
+      resultBox.innerHTML = `<span style="color:#ffccd5;">Error connecting to database. Try again later.</span>`;
+    }
+  }
+
+  async function trackCartOrder() {
+    const queryId = document.getElementById('cartTrackInput').value.trim().toUpperCase();
+    const resultBox = document.getElementById('cartTrackResult');
+    
+    if(!queryId) {
+      resultBox.innerHTML = `<span style="color:red;">Please enter a valid Order ID.</span>`;
+      return;
+    }
+
+    resultBox.innerHTML = "Searching...";
+
+    try {
+      const querySnapshot = await window.getDocs(window.collection(window.db, "orders"));
+      let foundOrder = null;
+      
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        if(data.orderId && data.orderId.toUpperCase() === queryId.replace('#', '')) {
+          foundOrder = data;
+        }
+      });
+
+      if(foundOrder) {
+        const status = foundOrder.status || 'Awaiting Shipment';
+        let statusColor = '#f39c12';
+        if(status === 'Shipped') statusColor = '#3498db';
+        if(status === 'Delivered') statusColor = '#2ecc71';
+
+        resultBox.innerHTML = `
+          <div style="background: #fff; padding: 12px; border-radius: 8px; border-left: 4px solid ${statusColor}; text-align: left;">
+            <p><strong>Order ID:</strong> #${foundOrder.orderId}</p>
+            <p><strong>Customer:</strong> ${foundOrder.name}</p>
+            <p><strong>Items:</strong> ${foundOrder.items}</p>
+            <p><strong>Total:</strong> ${foundOrder.total}</p>
+            <p style="margin-top: 6px;"><strong>Status:</strong> <span style="color: ${statusColor}; font-weight: bold;">${status}</span></p>
+          </div>
+        `;
+      } else {
+        resultBox.innerHTML = `<span style="color:#e74c3c;">Order not found. Please double-check your Order ID.</span>`;
+      }
+    } catch(err) {
+      console.error(err);
+      resultBox.innerHTML = `<span style="color:red;">Error connecting to database. Try again later.</span>`;
+    }
   }
 </script>
 </body>
